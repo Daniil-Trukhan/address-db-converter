@@ -1,0 +1,9 @@
+.idea/
+/import/*
+!/import/.gitkeep
+/output/*
+!/output/.gitkeep
+/resources/*
+!/resources/.gitkeep
+import.php
+
