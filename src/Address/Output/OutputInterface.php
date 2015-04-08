@@ -3,6 +3,6 @@ namespace Address\Output;
 
 interface OutputInterface
 {
-    function receiveSchemaResult($conversionResult);
-    function receiveDataResult($conversionResult);
+    function handleSchemaFile($tableName, \DOMDocument $schemaDocument);
+    function handleData($tableName, array $fields);
 } 
