@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<database>
+    <table id="ADDROBJ">
+        <primary-key field="AOID"/>
+        <foreign-key>
+            <field name="ACTSTATUS" for-database="ACTSTAT" for-table="ACTSTATID"/>
+        </foreign-key>
+        <foreign-key>
+            <field name="CENTSTATUS" for-database="CENTERST" for-table="CENTERSTID"/>
+        </foreign-key>
+        <foreign-key>
+            <field name="OPERSTATUS" for-database="OPERSTAT" for-table="OPERSTATID"/>
+        </foreign-key>
+        <foreign-key>
+            <field name="CURRSTATUS" for-database="CURENST" for-table="CURENSTID"/>
+        </foreign-key>
+        <foreign-key>
+            <field name="NORMDOC" for-database="NORMDOC" for-table="NORMDOCID"/>
+        </foreign-key>
+        <foreign-key>
+            <field name="AOLEVEL" for-database="SOCRBASE" for-table="LEVEL"/>
+            <field name="SHORTNAME" for-database="SOCRBASE" for-table="SCNAME"/>
+        </foreign-key>
+    </table>
+    <table id="CENTERST">
+        <primary-key field="CENTERSTID"/>
+    </table>
+    <table id="OPERSTAT">
+        <primary-key field="OPERSTATID"/>
+    </table>
+    <table id="ACTSTAT">
+        <primary-key field="ACTSTATID"/>
+    </table>
+    <table id="CURENTST">
+        <primary-key field="CURENTSTID"/>
+    </table>
+    <table id="SOCRBASE">
+        <primary-key field="LEVEL"/>
+        <primary-key field="SCNAME"/>
+    </table>
+    <table id="NORDOC">
+        <primary-key field="NORMDOCID"/>
+        <foreign-key>
+            <field name="DOCTYPE" for-database="NDOCTYPE" for-table="NDTYPEID"/>
+        </foreign-key>
+    </table>
+    <table id="NDOCTYPE">
+        <primary-key field="NDTYPEID"/>
+    </table>
+</database>
