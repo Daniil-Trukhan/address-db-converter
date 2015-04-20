@@ -47,4 +47,46 @@
     <table id="NDOCTYPE">
         <primary-key field="NDTYPEID"/>
     </table>
+	<table id="HOUSE">
+        <primary-key field="HOUSEID"/>
+		<foreign-key>
+            <field name="ESTSTATUS" for-database="ESTSTAT" for-table="ESTSTATID"/>
+        </foreign-key>
+		<foreign-key>
+            <field name="NORMDOC" for-database="NORDOC" for-table="NORMDOCID"/>
+        </foreign-key>
+		<foreign-key>
+            <field name="STATSTATUS" for-database="HSTSTAT" for-table="HOUSESTID"/>
+        </foreign-key>
+		<foreign-key>
+            <field name="STRSTATUS" for-database="STRSTAT" for-table="STRSTATID"/>
+        </foreign-key>
+    </table>
+	<table id="STRSTAT">
+        <primary-key field="STRSTATID"/>
+    </table>
+	<table id="HSTSTAT">
+        <primary-key field="HOUSESTID"/>
+    </table>
+	<table id="ESTSTAT">
+        <primary-key field="ESTSTATID"/>
+    </table>
+	<table id="HOUSEINT">
+        <primary-key field="HOUSEINTID"/>
+        <foreign-key>
+            <field name="INTSTATUS" for-database="INTVSTAT" for-table="INTVSTATID"/>
+        </foreign-key>
+		<foreign-key>
+            <field name="NORMDOC" for-database="NORDOC" for-table="NORMDOCID"/>
+        </foreign-key>
+    </table>
+	<table id="INTVSTAT">
+        <primary-key field="INTVSTATID"/>
+    </table>
+	<table id="LANDMARK">
+        <primary-key field="LANDID"/>
+		<foreign-key>
+            <field name="NORMDOC" for-database="NORDOC" for-table="NORMDOCID"/>
+        </foreign-key>
+    </table>
 </database>
