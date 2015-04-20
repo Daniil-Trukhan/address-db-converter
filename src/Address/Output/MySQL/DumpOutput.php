@@ -5,9 +5,22 @@ use Address\Output\Output;
 
 class DumpOutput extends Output
 {
+	/**
+	 * Ресурс под дамп схемы.
+	 * @var resource
+	 */
     private $schemaFile;
+	
+	/**
+	 * Ресурс под дамп данных.
+	 * @var resource
+	 */
     private $dumpFile;
 
+	/**
+	 * Ресурс под дамп схемы.
+	 * @var resource
+	 */
     public function __construct()
     {
         // Шаблон конвертации Схемы
@@ -23,27 +36,23 @@ class DumpOutput extends Output
         $this->dumpFile = fopen($dumpPathname, 'c');
     }
 
+	/**
+	 * @inheritdoc
+	 */
     public function handleSchemaFile($tableName, \DOMDocument $schemaDocument)
     {
         $this->xslt->setParameter('', 'tableName', $tableName);
         $sqlDefinition = $this->xslt->transformToXml($schemaDocument);
-        $this->receiveSchemaResult($sqlDefinition);
-    }
-
-    public function handleData($tableName, array $fields)
-    {
-        $queryTemplate = "INSERT INTO `%s` (`%s`) VALUES ('%s');" . PHP_EOL;
-        $sqlQuery = sprintf($queryTemplate, $tableName, implode("`, `", array_keys($fields)), implode("', '", $fields));
-        $this->receiveDataResult($sqlQuery);
-    }
-
-    private function receiveSchemaResult($conversionResult)
-    {
         fwrite($this->schemaFile, $conversionResult);
     }
 
-    private function receiveDataResult($conversionResult)
+	/**
+	 * @inheritdoc
+	 */
+    public function handleDataRow($tableName, array $fields)
     {
+        $queryTemplate = "INSERT INTO `%s` (`%s`) VALUES ('%s');" . PHP_EOL;
+        $sqlQuery = sprintf($queryTemplate, $tableName, implode("`, `", array_keys($fields)), implode("', '", $fields));
         fwrite($this->dumpFile, $conversionResult);
     }
 }

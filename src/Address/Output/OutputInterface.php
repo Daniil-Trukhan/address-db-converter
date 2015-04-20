@@ -3,6 +3,15 @@ namespace Address\Output;
 
 interface OutputInterface
 {
+	/**
+	 * Обработка файла со схемой.
+	 * 
+	 */
     function handleSchemaFile($tableName, \DOMDocument $schemaDocument);
-    function handleData($tableName, array $fields);
+	
+	/**
+	 * Обработка строки данных.
+	 * 
+	 */
+    function handleDataRow($tableName, array $fields);
 } 

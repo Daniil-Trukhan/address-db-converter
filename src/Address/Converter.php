@@ -4,57 +4,78 @@ namespace Address;
 use Address\Output\Output;
 
 /**
- * Usage
+ * Библиотека для конвертирования Федеральной информационной адресной системы (ФИАС) 
+ * http://fias.nalog.ru/
  *
- *
+ * Использование: см. README.md
  *
  * @package Address
  */
 class Converter
 {
-    public static $sourcePath;
-
+	/**
+	 * @var string
+	 */
+    public static $sourcePath = '';
+	
+	/**
+	 * @var string
+	 */
+	public static $schemaExtension = 'xsd';
+	
+	/**
+	 * @var string
+	 */
+	public static $dataExtension = 'xml';
+	
+	/**
+	 * Выполнить конвертацию в заданный формат.
+	 * 
+	 */
     public static function convert(Output $output)
     {
         self::convertSchema($output);
         self::convertData($output);
     }
-
+	
+	/**
+	 * Обработка файлов схемы.
+	 *
+	 */
     private static function convertSchema(Output $output)
     {
-        $extension = 'xsd';
-
         /** @var $schemaFile \DirectoryIterator */
         foreach (new \DirectoryIterator(self::$sourcePath) as $schemaFile) {
-            if ($schemaFile->isDot() === true || $schemaFile->getExtension() !== $extension) {
+            if ($schemaFile->isDot() === true || mb_strtolower($schemaFile->getExtension()) !== self::$schemaExtension) {
                 continue;
             }
 
-            // Table name
-            $baseName = $schemaFile->getBasename('.' . $extension);
+            // Имя таблички
+            $baseName = $schemaFile->getBasename('.' . self::$schemaExtension);
             $tableName = self::extractTableName($baseName);
 
-            // Prepare
+            // Подготовим исходный файл
             $schemaDocument = new \DOMDocument('1.0', 'UTF-8');
             $schemaDocument->load($schemaFile->getPathname());
 
-            // Convert
             $output->handleSchemaFile($tableName, $schemaDocument);
         }
     }
 
+	/**
+	 * Обработка файлов данных.
+	 *
+	 */
     private static function convertData(Output $output)
     {
-        $extension = 'XML';
-
         /** @var $dataFile \DirectoryIterator */
         foreach (new \DirectoryIterator(self::$sourcePath) as $dataFile) {
-            if ($dataFile->isDot() === true || $dataFile->getExtension() !== $extension) {
+            if ($dataFile->isDot() === true || mb_strtolower($dataFile->getExtension()) !== self::$dataExtension) {
                 continue;
             }
 
-            // Table name
-            $baseName = $dataFile->getBasename('.' . $extension);
+            // Имя таблички
+            $baseName = $dataFile->getBasename('.' . self::$dataExtension);
             $tableName = self::extractTableName($baseName);
 
             // Счетчики
@@ -62,7 +83,7 @@ class Converter
             $parsingCurrent = 0;
             $depth = 0;
 
-            // Prepare
+            // Настройка парсинга
             $xmlParser = xml_parser_create();
             xml_parser_set_option($xmlParser, XML_OPTION_CASE_FOLDING, false);
             xml_set_element_handler(
@@ -100,7 +121,7 @@ class Converter
                 }
             );
 
-            // Сам процесс
+            // Парсинг напрямую из файла
             $sourceFile = fopen($dataFile->getPathname(), 'r');
             while ($data = fread($sourceFile, 4096)) {
                 xml_parse($xmlParser, $data, feof($sourceFile));
@@ -112,8 +133,8 @@ class Converter
     }
 
     /**
-     * Название файлов пока не понятно.
-     * AS_ACTSTAT_2_250_08_04_01_01
+     * Получаем название таблички из имени файла, магия.
+     * пример: AS_ACTSTAT_2_250_08_04_01_01
      *
      * @param $baseName
      * @return mixed
