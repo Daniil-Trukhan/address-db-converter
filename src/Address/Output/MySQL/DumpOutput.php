@@ -32,8 +32,12 @@ class DumpOutput extends Output
         // Схема и дамп в виде файлов
         $schemaPathname = self::$outputPath . '/mysql-schema.sql';
         $this->schemaFile = fopen($schemaPathname, 'c');
+
         $dumpPathname = self::$outputPath . '/mysql-dump.sql';
         $this->dumpFile = fopen($dumpPathname, 'c');
+
+        $indexPathname = self::$outputPath . '/mysql-index.sql';
+        $this->indexFile = fopen($indexPathname, 'c');
     }
 
 	/**
@@ -42,7 +46,7 @@ class DumpOutput extends Output
     public function handleSchemaFile($tableName, \DOMDocument $schemaDocument)
     {
         $this->xslt->setParameter('', 'tableName', $tableName);
-        $sqlDefinition = $this->xslt->transformToXml($schemaDocument);
+        $conversionResult = $this->xslt->transformToXml($schemaDocument);
         fwrite($this->schemaFile, $conversionResult);
     }
 
@@ -52,7 +56,18 @@ class DumpOutput extends Output
     public function handleDataRow($tableName, array $fields)
     {
         $queryTemplate = "INSERT INTO `%s` (`%s`) VALUES ('%s');" . PHP_EOL;
-        $sqlQuery = sprintf($queryTemplate, $tableName, implode("`, `", array_keys($fields)), implode("', '", $fields));
+        $conversionResult = sprintf($queryTemplate, $tableName, implode("`, `", array_keys($fields)), implode("', '", $fields));
         fwrite($this->dumpFile, $conversionResult);
+    }
+
+    public function handleIndex()
+    {
+        $template = new \DOMDocument('1.0', 'UTF-8');
+        $template->load(self::$resourcesPath . '/mysql-index.xsl');
+        $this->xslt = new \XSLTProcessor();
+        $this->xslt->importStylesheet($template);
+
+        $conversionResult = $this->xslt->transformToXml($schemaDocument);
+        fwrite($this->schemaFile, $conversionResult);
     }
 }

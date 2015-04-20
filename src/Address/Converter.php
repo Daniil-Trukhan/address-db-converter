@@ -132,6 +132,11 @@ class Converter
         }
     }
 
+    public static function convertIndex(Output $output)
+    {
+        $output->handleIndex();
+    }
+
     /**
      * Получаем название таблички из имени файла, магия.
      * пример: AS_ACTSTAT_2_250_08_04_01_01
