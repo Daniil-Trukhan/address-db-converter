@@ -67,7 +67,10 @@ class DumpOutput extends Output
         $this->xslt = new \XSLTProcessor();
         $this->xslt->importStylesheet($template);
 
-        $conversionResult = $this->xslt->transformToXml($schemaDocument);
-        fwrite($this->schemaFile, $conversionResult);
+		$indexDocument = new \DOMDocument('1.0', 'UTF-8');
+        $indexDocument->load(self::$resourcesPath . '/mysql-index.xml');
+		
+        $conversionResult = $this->xslt->transformToXml($indexDocument);
+        fwrite($this->indexFile, $conversionResult);
     }
 }

@@ -71,4 +71,9 @@ class ConnectionOutput extends Output
 		$fields += $this->tableColumns[$tableName]; // Наибыстрейший способ
         $this->preparedStatements[$tableName]->execute($fields);
     }
+	
+	public function handleIndex()
+    {
+        
+    }
 }
