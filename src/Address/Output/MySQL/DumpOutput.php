@@ -16,6 +16,13 @@ class DumpOutput extends Output
 	 * @var resource
 	 */
     private $dumpFile;
+	
+	/**
+	 * Ресурс под дамп данных.
+	 * @var resource
+	 */
+    private $indexFile;
+
 
 	/**
 	 * Ресурс под дамп схемы.
@@ -38,6 +45,11 @@ class DumpOutput extends Output
 
         $indexPathname = self::$outputPath . '/mysql-index.sql';
         $this->indexFile = fopen($indexPathname, 'c');
+		
+		$header = $this->composeHeader();
+		fwrite($this->schemaFile, $header);
+		fwrite($this->dumpFile, $header);
+		fwrite($this->indexFile, $header);
     }
 
 	/**
@@ -74,4 +86,26 @@ class DumpOutput extends Output
         $conversionResult = $this->xslt->transformToXml($indexDocument);
         fwrite($this->indexFile, $conversionResult);
     }
+	
+	public function composeHeader()
+    {
+        $template = new \DOMDocument('1.0', 'UTF-8');
+        $template->load(self::$resourcesPath . '/mysql-system.xsl');
+        $this->xslt = new \XSLTProcessor();
+        $this->xslt->importStylesheet($template);
+
+		$indexDocument = new \DOMDocument('1.0', 'UTF-8');
+
+		
+		$headerNode = $indexDocument->createElement('header');
+		$headerNode->appendChild($indexDocument->createElement('generated-date', date('Y-m-d H:i:s')));
+
+		$indexDocument->appendChild($headerNode);
+		
+        $conversionResult = $this->xslt->transformToXml($indexDocument);
+        
+		return $conversionResult;
+    }
+	
+	
 }
