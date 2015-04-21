@@ -42,7 +42,7 @@ class Converter
 	 * Обработка файлов схемы.
 	 *
 	 */
-    private static function convertSchema(Output $output)
+    public static function convertSchema(Output $output)
     {
         /** @var $schemaFile \DirectoryIterator */
         foreach (new \DirectoryIterator(self::$sourcePath) as $schemaFile) {

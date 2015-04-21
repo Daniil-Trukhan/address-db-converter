@@ -23,7 +23,7 @@
     </table>
     <table id="SOCRBASE">
         <primary-key field="LEVEL"/>
-        <primary-key field="SCfield"/>
+        <primary-key field="SCNAME"/>
     </table>
     <table id="NORDOC">
         <primary-key field="NORMDOCID"/>

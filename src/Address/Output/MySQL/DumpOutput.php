@@ -68,8 +68,9 @@ class DumpOutput extends Output
         $this->xslt->importStylesheet($template);
 
 		$indexDocument = new \DOMDocument('1.0', 'UTF-8');
+		$indexDocument->preserveWhiteSpace = false;
         $indexDocument->load(self::$resourcesPath . '/mysql-index.xml');
-		
+
         $conversionResult = $this->xslt->transformToXml($indexDocument);
         fwrite($this->indexFile, $conversionResult);
     }

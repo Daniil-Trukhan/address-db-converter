@@ -2,8 +2,8 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="text" encoding="UTF-8"/>
 
-    <xsl:template match="/database/table">
-        <xsl:text>ALTER TABLE `</xsl:text><xsl:value-of select="@id"/><xsl:text>`</xsl:text>
+	<xsl:template match="/database/table">
+		<xsl:text>ALTER TABLE `</xsl:text><xsl:value-of select="@id"/><xsl:text>`</xsl:text>
 
 		<!-- For each key, handle key type in loop -->
 		<xsl:for-each select="*">
@@ -27,6 +27,9 @@
 		
 		<!-- End of statement -->
 		<xsl:text>;</xsl:text>
-
-    </xsl:template>
+		
+		<xsl:if test="position() != last()">
+			<xsl:text>&#xa;</xsl:text>
+		</xsl:if>
+	</xsl:template>
 </xsl:stylesheet>
