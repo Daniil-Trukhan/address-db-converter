@@ -43,6 +43,6 @@ $output = new Address\Output\MySQL\DumpOutput();
 
 Address\Converter::convert($output);
 ```
-
+Запуск  
 ```bat
 C:\php\php.exe C:\address-db-converter\import.php
