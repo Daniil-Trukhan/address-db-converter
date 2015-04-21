@@ -42,7 +42,7 @@ $output = new Address\Output\MySQL\ConnectionOutput($conn);
 $output = new Address\Output\MySQL\DumpOutput();
 
 Address\Converter::convert($output);
+```
 
-
-```sh
+```bat
 C:\php\php.exe C:\address-db-converter\import.php
