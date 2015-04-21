@@ -2,25 +2,12 @@
 <database>
     <table id="ADDROBJ">
         <primary-key field="AOID"/>
-        <foreign-key>
-            <field name="ACTSTATUS" for-table="ACTSTAT" for-field="ACTSTATID"/>
-        </foreign-key>
-        <foreign-key>
-            <field name="CENTSTATUS" for-table="CENTERST" for-field="CENTERSTID"/>
-        </foreign-key>
-        <foreign-key>
-            <field name="OPERSTATUS" for-table="OPERSTAT" for-field="OPERSTATID"/>
-        </foreign-key>
-        <foreign-key>
-            <field name="CURRSTATUS" for-table="CURENST" for-field="CURENSTID"/>
-        </foreign-key>
-        <foreign-key>
-            <field name="NORMDOC" for-table="NORMDOC" for-field="NORMDOCID"/>
-        </foreign-key>
-        <foreign-key>
-            <field name="AOLEVEL" for-table="SOCRBASE" for-field="LEVEL"/>
-            <field name="SHORTNAME" for-table="SOCRBASE" for-field="SCNAME"/>
-        </foreign-key>
+        <foreign-key field="ACTSTATUS" for-table="ACTSTAT" for-field="ACTSTATID"/>
+        <foreign-key field="CENTSTATUS" for-table="CENTERST" for-field="CENTERSTID"/>
+        <foreign-key field="OPERSTATUS" for-table="OPERSTAT" for-field="OPERSTATID"/>
+        <foreign-key field="CURRSTATUS" for-table="CURENST" for-field="CURENSTID"/>
+        <foreign-key field="NORMDOC" for-table="NORMDOC" for-field="NORMDOCID"/>
+        <foreign-key field="AOLEVEL, SHORTNAME" for-table="SOCRBASE" for-field="LEVEL, SCNAME"/>
     </table>
     <table id="CENTERST">
         <primary-key field="CENTERSTID"/>
@@ -36,31 +23,21 @@
     </table>
     <table id="SOCRBASE">
         <primary-key field="LEVEL"/>
-        <primary-key field="SCNAME"/>
+        <primary-key field="SCfield"/>
     </table>
     <table id="NORDOC">
         <primary-key field="NORMDOCID"/>
-        <foreign-key>
-            <field name="DOCTYPE" for-table="NDOCTYPE" for-field="NDTYPEID"/>
-        </foreign-key>
+        <foreign-key field="DOCTYPE" for-table="NDOCTYPE" for-field="NDTYPEID"/>
     </table>
     <table id="NDOCTYPE">
         <primary-key field="NDTYPEID"/>
     </table>
 	<table id="HOUSE">
         <primary-key field="HOUSEID"/>
-		<foreign-key>
-            <field name="ESTSTATUS" for-table="ESTSTAT" for-field="ESTSTATID"/>
-        </foreign-key>
-		<foreign-key>
-            <field name="NORMDOC" for-table="NORDOC" for-field="NORMDOCID"/>
-        </foreign-key>
-		<foreign-key>
-            <field name="STATSTATUS" for-table="HSTSTAT" for-field="HOUSESTID"/>
-        </foreign-key>
-		<foreign-key>
-            <field name="STRSTATUS" for-table="STRSTAT" for-field="STRSTATID"/>
-        </foreign-key>
+		<foreign-key field="ESTSTATUS" for-table="ESTSTAT" for-field="ESTSTATID"/>
+		<foreign-key field="NORMDOC" for-table="NORDOC" for-field="NORMDOCID"/>
+		<foreign-key field="STATSTATUS" for-table="HSTSTAT" for-field="HOUSESTID"/>
+		<foreign-key field="STRSTATUS" for-table="STRSTAT" for-field="STRSTATID"/>
     </table>
 	<table id="STRSTAT">
         <primary-key field="STRSTATID"/>
@@ -73,20 +50,14 @@
     </table>
 	<table id="HOUSEINT">
         <primary-key field="HOUSEINTID"/>
-        <foreign-key>
-            <field name="INTSTATUS" for-table="INTVSTAT" for-field="INTVSTATID"/>
-        </foreign-key>
-		<foreign-key>
-            <field name="NORMDOC" for-table="NORDOC" for-field="NORMDOCID"/>
-        </foreign-key>
+        <foreign-key field="INTSTATUS" for-table="INTVSTAT" for-field="INTVSTATID"/>
+		<foreign-key field="NORMDOC" for-table="NORDOC" for-field="NORMDOCID"/>
     </table>
 	<table id="INTVSTAT">
         <primary-key field="INTVSTATID"/>
     </table>
 	<table id="LANDMARK">
         <primary-key field="LANDID"/>
-		<foreign-key>
-            <field name="NORMDOC" for-table="NORDOC" for-field="NORMDOCID"/>
-        </foreign-key>
+		<foreign-key field="NORMDOC" for-table="NORDOC" for-field="NORMDOCID"/>
     </table>
 </database>
