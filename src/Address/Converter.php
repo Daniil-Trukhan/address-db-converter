@@ -149,4 +149,20 @@ class Converter
         $baseNameParts = explode('_', $baseName);
         return $baseNameParts[1];
     }
+
+    /**
+     * Вывод в консоль.
+     *
+     * @param $message
+     * @param $newLine
+     * @return mixed
+     */
+    private function log($message, $newLine = true)
+    {
+        if ($newLine === true) {
+            echo PHP_EOL;
+        }
+
+        echo $message;
+    }
 }
