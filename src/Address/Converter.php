@@ -28,6 +28,24 @@ class Converter
 	 */
 	public static $dataExtension = 'xml';
 	
+    private $importFiles = array(
+        'ACTSTAT',
+        'ADDROBJ',
+        'CENTERST'
+        'CURENTST',
+        'ESTSTAT',
+        'HOUSE',
+        'HOUSEINT',
+        'HSTSTAT',
+        'INTVSTAT',
+        'LANDMARK',
+        'NDOCTYPE',
+        'NORMDOC',
+        'OPERSTAT',
+        'SOCRBSE',
+        'STRSTAT'
+    );
+
 	/**
 	 * Выполнить конвертацию в заданный формат.
 	 * 
