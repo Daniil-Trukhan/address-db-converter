@@ -11,12 +11,12 @@ use Address\Output\Output;
  *
  * @package Address
  */
-class Converter
+class Converter extends Console
 {
 	/**
 	 * @var string
 	 */
-    public static $sourcePath = '';
+    public static $importPath = '';
 	
 	/**
 	 * @var string
@@ -50,10 +50,24 @@ class Converter
 	 * Выполнить конвертацию в заданный формат.
 	 * 
 	 */
-    public static function convert(Output $output)
+    public function convert(Output $output)
     {
-        self::convertSchema($output);
-        self::convertData($output);
+        $this->outputHeader('Get latest release @ https://github.com/shadz3rg/address-db-converter');
+
+        foreach ($this->importFiles as $fileName) {
+            $this->output('+ Table ' . $fileName);
+
+            $schemaFile = self::$importFiles . $fileName . self::$schemaExtension;
+            $schema = new TableSchema($tableName, $schemaFile);
+
+            $tableFields = $schema->getTableFields();
+            $schema->applyKeys();
+            $schema->convertAndDump($schemaFIleOutput);
+
+            $dataFile = self::$importPath . $fileName . self::$dataExtension;
+            $tableData = new TableData($dataFile);
+            $schema->convertAndDump($schemaFIleOutput);
+        }
     }
 	
 	/**
@@ -168,19 +182,5 @@ class Converter
         return $baseNameParts[1];
     }
 
-    /**
-     * Вывод в консоль.
-     *
-     * @param $message
-     * @param $newLine
-     * @return mixed
-     */
-    private function log($message, $newLine = true)
-    {
-        if ($newLine === true) {
-            echo PHP_EOL;
-        }
 
-        echo $message;
-    }
 }

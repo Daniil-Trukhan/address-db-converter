@@ -12,4 +12,5 @@ require 'Address/Output/Output.php';
 require 'Address/Output/MySQL/DumpOutput.php';
 require 'Address/Output/MySQL/ConnectionOutput.php';
 
+require 'Address/Console.php';
 require 'Address/Converter.php';
