@@ -56,6 +56,7 @@ class TableSchema
 
 	public function convertAndDump(\Address\Formatter\Formatter $formatter, $dumpFile)
 	{
+		// TODO WRITE HEADER IN OUTPUT FILE
         $conversionResult = $formatter->handleSchemaFile($this->tableName, $this->schemaDocument);
         file_put_contents($dumpFile, $conversionResult);
 	}

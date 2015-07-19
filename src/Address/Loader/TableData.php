@@ -9,13 +9,16 @@ class TableData extends Console
 	private $tableFields;
 	private $dataFile;
 
-	private $xmlParser;
+	private $parser;
 	private $currentRow = 0;
 	private $treeDepth = 0;
+	private $queue = array();
 
 	public static $chunkSize = 4096;
 
-	private $dataFileSize;
+	private $contentLength;
+	private $contentLengthStep;
+	private $processedLength;
 
 	public function __construct($tableName, $tableFields, $dataFile)
 	{
@@ -27,16 +30,17 @@ class TableData extends Console
 		$this->dataFile = $dataFile;
 		$this->tableName = $tableName;
 		$this->tableFields = $tableFields;
+		$this->defaultRow = array_fill_keys($tableFields, null);
 
 		//
-		$dataFileSize = filesize($this->dataFile);
-    	$sourcePercent = $sourceFileSize / 100;
-    	$sourceProgress = 0;
-    	$sourcePercentProgress = 0;
+		$this->contentLength = filesize($this->dataFile);
+    	$this->contentLengthStep = $this->contentLength / 100;
+    	$this->processedLength = 0;
 
-		$this->xmlParser = xml_parser_create();
-		xml_set_object($this->xmlParser, $this);
-        xml_set_element_handler($this->xmlParser, "parserOpenTag", "parserClosetag");
+		//
+		$this->parser = xml_parser_create();
+		xml_set_object($this->parser, $this);
+        xml_set_element_handler($this->parser, "parserOpenTag", "parserClosetag");
 	}
 
 	private function parserOpenTag($parser, $tag, $attributes)
@@ -49,19 +53,8 @@ class TableData extends Console
         $this->treeDepth += 1;
         $this->currentRow += 1;
 
-        // Форматируем под нужный синтаксис
-        //$output->handleData($tableName, $attributes);
-
-        // Вывод технической информации
-
-        /*if (($this->currentRow % self::$packet) === 0) {
-            $this->output($this->currentRow);
-
-            if ($this->currentRow % (self::$packet * self::$averageAmount) === 0) {
-                $this->output(' AVG: ' . round((microtime(true) - $this->timerState) / self::$averageAmount, 2) . 's');
-                $this->timerState = microtime(true);
-            }
-        }*/
+        // Поля записи
+        $this->queue[] = $attributes;
 	}
 
 	private function parserCloseTag($parser, $tag)
@@ -69,30 +62,37 @@ class TableData extends Console
         $this->depth -= 1; // псевдо-дерево
 	}
 
-	public function convertAndDump($outputFile) 
+	public function convertAndDump(\Address\Formatter\Formatter $formatter, $outputFile) 
     {
-    	$sourceFileSize = filesize($this->dataFile);
-    	$sourcePercent = $sourceFileSize / 100;
-    	$sourceProgress = 0;
-    	$sourcePercentProgress = 0;
-
+    	// TODO WRITE HEADER IN OUTPUT FILE
         $sourceFile = fopen($this->dataFile, 'r');
-            
+        
+        // Парсим фрагменты файла
+        $processedPercent = 0;
         while ($data = fread($sourceFile, self::$chunkSize)) {
-            xml_parse($this->xmlParser, $data, feof($sourceFile));
+            xml_parse($this->parser, $data, feof($sourceFile));
 
-            $sourceProgress += self::$chunkSize;
+            // Форматирование строки
+            $this->queue = array_reverse($this->queue);
+            while (count($this->queue) !== 0) {
+            	$tableRow = array_pop($this->queue);
+            	$tableRow = array_intersect_key($tableRow + $this->defaultRow, $this->defaultRow);
 
-            if (floor($sourceProgress / $sourcePercent) > $sourcePercentProgress) {
-            	$sourcePercentProgress = floor($sourceProgress / $sourcePercent);
-            	$this->output($sourcePercentProgress . '%');
+            	$conversionResult = $formatter->handleDataFile($this->tableName, $tableRow);
+            	file_put_contents($outputFile, $conversionResult, FILE_APPEND);
             }
-
-
+            
+            // Вывод прогресса в консоль
+            $this->processedLength += self::$chunkSize;
+            $currentPercent = ($this->processedLength < $this->contentLength) ? ceil($this->processedLength / $this->contentLength * 100) : 100;
+            if ($this->contentLength > self::$chunkSize && $currentPercent > $processedPercent) {
+            	$this->output('  ' . $currentPercent . '%');
+            }
+            $processedPercent = $currentPercent;
         }
 
         fclose($sourceFile);
 
-        xml_parser_free($this->xmlParser);
+        xml_parser_free($this->parser);
     }
 }

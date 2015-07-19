@@ -37,7 +37,7 @@ class Converter extends Console
      */
     private $tableList = array(
         'ACTSTAT',
-        'ADDROBJ',
+        /*'ADDROBJ',
         'CENTERST',
         'CURENTST',
         'ESTSTAT',
@@ -50,7 +50,7 @@ class Converter extends Console
         'NORMDOC',
         'OPERSTAT',
         'SOCRBASE',
-        'STRSTAT'
+        'STRSTAT'*/
     );
 
     public function __construct($importPath, $outputPath)
@@ -88,7 +88,7 @@ class Converter extends Console
             $tableData = new Loader\TableData($tableName, $tableFields, $dataFile);
 
             $outputFile = $this->outputPath . '/' . $tableName . '.data.sql';
-            $tableData->convertAndDump($outputFile);
+            $tableData->convertAndDump($formatter, $outputFile);
             $this->output('...Done. ' , false);
 /*
             $tableFields = $schema->getTableFields();
@@ -237,6 +237,4 @@ class Converter extends Console
 
         return null;
     }
-
-
 }
