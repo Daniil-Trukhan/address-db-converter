@@ -12,26 +12,33 @@ use Address\Output\Output;
  * @package Address
  */
 class Converter extends Console
-{
+{	
+    /**
+     * @var string
+     */
+    private $importPath = '';
+    
+    /**
+     * @var string
+     */
+    private $outputPath = '';
 	/**
 	 * @var string
 	 */
-    public static $importPath = '';
+	private $schemaExtension = 'xsd';
 	
 	/**
 	 * @var string
 	 */
-	public static $schemaExtension = 'xsd';
+	private $dataExtension = 'xml';
 	
-	/**
-	 * @var string
-	 */
-	public static $dataExtension = 'xml';
-	
-    private $importFiles = array(
+    /**
+     * @var array
+     */
+    private $tableList = array(
         'ACTSTAT',
         'ADDROBJ',
-        'CENTERST'
+        'CENTERST',
         'CURENTST',
         'ESTSTAT',
         'HOUSE',
@@ -42,31 +49,74 @@ class Converter extends Console
         'NDOCTYPE',
         'NORMDOC',
         'OPERSTAT',
-        'SOCRBSE',
+        'SOCRBASE',
         'STRSTAT'
     );
+
+    public function __construct($importPath, $outputPath)
+    {
+        // todo check em
+        $this->importPath = $importPath;
+        $this->outputPath = $outputPath;
+    }
 
 	/**
 	 * Выполнить конвертацию в заданный формат.
 	 * 
 	 */
-    public function convert(Output $output)
+    public function convert(Formatter\FormatterInterface $formatter)
     {
-        $this->outputHeader('Get latest release @ https://github.com/shadz3rg/address-db-converter');
+        $this->output('Get latest release @ https://github.com/shadz3rg/address-db-converter', false);
 
-        foreach ($this->importFiles as $fileName) {
-            $this->output('+ Table ' . $fileName);
+        foreach ($this->tableList as $tableName) {
+            
+            $this->output('+ Table Schema ' . $tableName);
 
-            $schemaFile = self::$importFiles . $fileName . self::$schemaExtension;
-            $schema = new TableSchema($tableName, $schemaFile);
+            $schemaFile = $this->importPath . '/' . $tableName . '.' . $this->schemaExtension;
+            $schema = new Loader\TableSchema($tableName, $schemaFile);
 
+            $outputFile = $this->outputPath . '/' . $tableName . '.sql';
+            $schema->convertAndDump($formatter, $outputFile);
+
+            $this->output('...Done. ' , false);
+
+            //
+            $this->output('+ Table Data ' . $tableName);
+            $tableFields = $schema->getTableFields();
+
+            $dataFile = $this->importPath . '/' . $tableName . '.' . $this->dataExtension;
+            $tableData = new Loader\TableData($tableName, $tableFields, $dataFile);
+
+            $outputFile = $this->outputPath . '/' . $tableName . '.data.sql';
+            $tableData->convertAndDump($outputFile);
+            $this->output('...Done. ' , false);
+/*
             $tableFields = $schema->getTableFields();
             $schema->applyKeys();
             $schema->convertAndDump($schemaFIleOutput);
 
-            $dataFile = self::$importPath . $fileName . self::$dataExtension;
-            $tableData = new TableData($dataFile);
-            $schema->convertAndDump($schemaFIleOutput);
+            $dataFile = self::$importFiles . '/' . $tableName . '.' . self::$dataExtension;
+            $tableData = new TableData($tableName, $tableFields, $dataFile);
+            $schema->convertAndDump($schemaFIleOutput);*/
+        }
+    }
+
+    public static function prepareFilenames($importPath)
+    {
+        /** @var $schemaFile \DirectoryIterator */
+        foreach (new \DirectoryIterator($importPath) as $currentFile) {
+            if ($currentFile->isDot() === true) {
+                continue;
+            }
+        // todo test
+            $fileName = $currentFile->getFilename();
+            $tableName = self::extractTableName($fileName);
+
+            if ($tableName !== null) {
+                $oldname = $currentFile->getPathname();
+                $newname = $currentFile->getPath() . '/' . $tableName . '.' . $currentFile->getExtension();
+                rename($oldname, $newname);
+            }
         }
     }
 	
@@ -172,6 +222,7 @@ class Converter extends Console
     /**
      * Получаем название таблички из имени файла, магия.
      * пример: AS_ACTSTAT_2_250_08_04_01_01
+     * ожидаем результат: ACTSTAT
      *
      * @param $baseName
      * @return mixed
@@ -179,7 +230,12 @@ class Converter extends Console
     private static function extractTableName($baseName)
     {
         $baseNameParts = explode('_', $baseName);
-        return $baseNameParts[1];
+
+        if (isset($baseNameParts[1]) === true) {
+            return $baseNameParts[1];
+        }
+
+        return null;
     }
 
 

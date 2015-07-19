@@ -3,13 +3,16 @@ namespace Address\Formatter;
 
 class MySQLFormatter extends Formatter
 {
+    private $resourcesPath = '';
     private $xslt;
 
-    public function __construct()
+    public function __construct($resourcesPath)
     {
+        $this->resourcesPath = $resourcesPath;
+
         // Шаблон конвертации
         $template = new \DOMDocument('1.0', 'UTF-8');
-        $template->load(self::$resourcesPath . '/mysql-schema.xsl');
+        $template->load($this->resourcesPath . '/mysql-schema.xsl');
         $this->xslt = new \XSLTProcessor();
         $this->xslt->importStylesheet($template);
     }
